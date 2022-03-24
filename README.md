@@ -1,2 +1,3 @@
-# vcdreplay
-VCD Replay : a library for reconstructing transactions from a VCD file
+# WaveReplay
+
+A library for reconstructing transactions from a waveform file
