@@ -13,6 +13,7 @@ import wavereplay._
 //  One might want to make @-calls within defs in order to control
 //  their calling order later
 //
+/*
 class AxiAction extends WaveAction {
 
     // clock
@@ -93,4 +94,9 @@ object Main extends App {
     val waveform = WaveForm.FromVCD("....");
     waveform.replay(Seq(axi_replay))
 
+}
+*/
+
+object Main extends App {
+    
 }
