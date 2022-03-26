@@ -66,4 +66,6 @@ abstract class WaveForm {
         case Some(sInfo)    => Some(sInfo.Value)
         case _              => None
     }
+
+    def GetSigWidth(s: Signal): Int = GetSigInfo(s).Width
 }

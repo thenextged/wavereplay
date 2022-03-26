@@ -5,9 +5,11 @@ package wavereplay
  * Information about a `Signal` at a certain time
  *
  * @param Value     the value of the signal
+ * @param Width     the width of the signal.
+ *                  Width == 0 => SigInfo is invalid
  * @param Time      the time for which the signal value is provided
  */
-case class SigInfo(Value: Int, Time: Int)
+case class SigInfo(Value: Int = 0, Width: Int = 0, Time: Long = 0)
 
 /**
  * History of a `Signal`
@@ -15,7 +17,7 @@ case class SigInfo(Value: Int, Time: Int)
  * @param Prev      information about a signal's previous state
  * @param Cur       information about a signal's current state
  */
-case class SigHistory(Prev: Option[SigInfo], Cur: Option[SigInfo])
+case class SigHistory(Prev: Option[SigInfo] = None, Cur: Option[SigInfo] = None)
 
 
 /**
@@ -41,6 +43,20 @@ class Signal(val FullPath: String)(implicit val Wvfm: WaveForm) {
         case Some(v)    => v != 0
         case _          => false
     }
+
+    /**
+     * Signal equality
+     */
+    override def equals(x: Any): Boolean = x match {
+        case s: Signal  => FullPath == s.FullPath
+        case _          => false
+    }
+
+    /**
+     * Signal hash code
+     */
+    override def hashCode: Int = 31 * FullPath.hashCode
+
 }
 
 object Signal {
