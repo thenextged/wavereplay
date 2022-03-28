@@ -15,7 +15,12 @@ abstract class WaveForm {
     /**
      * Get current time mark in the waveform
      */
-    def GetCurTime: Int
+    def GetCurTime(): Int
+
+    /**
+     * Check for equality
+     */
+    def SameAs(that: WaveForm): Boolean
 
     /**
      * Get a SigInfo for the given signal
@@ -67,5 +72,16 @@ abstract class WaveForm {
         case _              => None
     }
 
+    /**
+     * Get width of a signal
+     *
+     * @param s the signal of interest
+     * @return the width of the given signal
+     */
     def GetSigWidth(s: Signal): Int = GetSigInfo(s).Width
+
+    override def equals(that: Any): Boolean = that match {
+        case w: WaveForm    => SameAs(w)
+        case _              => false
+    }
 }

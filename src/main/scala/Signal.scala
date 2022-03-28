@@ -1,6 +1,9 @@
 package aha
 package wavereplay
 
+/* Scala Imports */
+import scala.language.implicitConversions
+
 /**
  * Information about a `Signal` at a certain time
  *
@@ -29,6 +32,11 @@ case class SigHistory(Prev: Option[SigInfo] = None, Cur: Option[SigInfo] = None)
 class Signal(val FullPath: String)(implicit val Wvfm: WaveForm) {
 
     /**
+     * Get the waveform backing this signal
+     */
+    def GetWaveForm(): WaveForm = Wvfm
+
+    /**
      * Convert to an Int`
      */
     def toInt: Int = Wvfm.GetCurValue(this) match {
@@ -39,7 +47,7 @@ class Signal(val FullPath: String)(implicit val Wvfm: WaveForm) {
     /**
      * Convert to a boolean
      */
-    def toBool: Int = Wvfm.GetCurValue(this) match {
+    def toBool: Boolean = Wvfm.GetCurValue(this) match {
         case Some(v)    => v != 0
         case _          => false
     }
@@ -70,4 +78,6 @@ object Signal {
      * Implicit conversion of a `Signal` to a `Boolean`
      */
     implicit def sigToBoolean(s: Signal): Boolean = s.toBool
+
+    //def apply(fullPath: String): Signal = new Signal(fullPath)
 }

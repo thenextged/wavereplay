@@ -52,7 +52,7 @@ class PosEdgeEvent(val s: Signal) extends WaveEvent {
 
     def Occured(wvfm: WaveForm): Boolean = s.Wvfm.GetSigWidth(s) match {
         case 1 => {
-            val (prev, cur) = wvfm.GetSigHistory(s)
+            val SigHistory(prev, cur) = wvfm.GetSigHistory(s)
             for (p <- prev; c <- cur) {
                 return (p.Value == 0) && (c.Value == 1)
             }
@@ -80,7 +80,7 @@ class NegEdgeEvent(val s: Signal) extends WaveEvent {
 
     def Occured(wvfm: WaveForm): Boolean = s.Wvfm.GetSigWidth(s) match {
         case 1 => {
-            val (prev, cur) = wvfm.GetSigHistory(s)
+            val SigHistory(prev, cur) = wvfm.GetSigHistory(s)
             for (p <- prev; c <- cur) {
                 return (p.Value == 1) && (c.Value == 0)
             }
