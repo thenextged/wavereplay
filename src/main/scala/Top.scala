@@ -82,6 +82,7 @@ class MyWaveForm extends WaveForm {
 
 object Main extends App {
 
+    /**
     val myWaveForm = new MyWaveForm()
 
     val myAction = new MyAction(myWaveForm)
@@ -91,4 +92,49 @@ object Main extends App {
     val replay = WaveReplay.Replay(Seq(myAction))
 
     println(s"num trans = ${myAction.numTrans}")
+    */
+
+    val content = """$date June 26, 1989 10:05:41
+                     $end
+                     $version VERILOG-SIMULATOR 1.0a
+                     $end
+                     $timescale 1 ns
+                     $end
+                     $scope module top $end
+                     $var trireg 1 *@ net1 $end
+                     $var trireg 1 *# net2 $end
+                     $var trireg 1 *$ net3 $end
+                     $upscope $end
+                     $upscope $end
+                     $enddefinitions $end
+                     $comment
+                        dumpvars was executed at time '#500'.
+                        All initial values are dumped at this time.
+                     $end
+
+                     #500
+                     $dumpvars
+                     x*@
+                     x*#
+                     x*$
+                     bx (k
+                     bx {2}
+                     $end
+                     #505
+                     0*@
+                     1*#
+                     1*$
+                     b10zx1110x11100 (k
+                     b1111000101Z01x {2
+                     #510
+                     0*$
+                     #520
+                     1*$"""
+
+    vcd.VcdLexer(content) match {
+        case Right(result)  => result foreach println
+        case Left(x)        => println(x)
+    }
+
+
 }
