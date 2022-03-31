@@ -39,6 +39,14 @@ abstract class WaveForm {
     def GetSigHistory(s: Signal): SigHistory
 
     /**
+     * Get width of a signal
+     *
+     * @param s the signal of interest
+     * @return the width of the given signal
+     */
+    def GetSigWidth(s: Signal): Int
+
+    /**
      * Initialization hook
      * called before signal values are read
      */
@@ -71,14 +79,6 @@ abstract class WaveForm {
         case Some(sInfo)    => Some(sInfo.Value)
         case _              => None
     }
-
-    /**
-     * Get width of a signal
-     *
-     * @param s the signal of interest
-     * @return the width of the given signal
-     */
-    def GetSigWidth(s: Signal): Int = GetSigInfo(s).Width
 
     override def equals(that: Any): Boolean = that match {
         case w: WaveForm    => SameAs(w)
