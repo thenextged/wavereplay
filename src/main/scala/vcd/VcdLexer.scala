@@ -33,7 +33,7 @@ object VcdLexer extends RegexParsers {
 
     val SCOPE_KIND          = """(begin|fork|function|module|task)""".r
     val SCOPE_IDENTIFIER    = """[a-zA-Z_][a-zA-Z_0-9\(\)]*""".r
-    val VAR_REFERENCE       = """[a-zA-Z_][a-zA-Z0-9_\$]+""".r
+    val VAR_REFERENCE       = """[a-zA-Z_][a-zA-Z0-9_\$]*""".r
     val VAR_BIT_EXTRACT     = """\[\d+(:\d+)*\]""".r
 
     val DECIMAL_NUM         = """[0-9]+""".r
