@@ -179,7 +179,7 @@ class VcdInMemWaveForm(val vcdInMemContent: String) extends WaveForm {
             val TimedValueHistory(_, curVal) = valueMap(s.FullPath)
 
             curVal match {
-                case Some(t)    => SigInfo(MakeIntValue(t.Value), sigWidth, sigTime)
+                case Some(t)    => SigInfo(MakeIntegralValue(t.Value), sigWidth, sigTime)
                 case _          => SigInfo(0, 0, -1)
             }
         }
@@ -194,7 +194,7 @@ class VcdInMemWaveForm(val vcdInMemContent: String) extends WaveForm {
 
             prevVal match {
                 case Some(t)    => {
-                    val pV = SigInfo(MakeIntValue(t.Value), sigWidth, t.Time)
+                    val pV = SigInfo(MakeIntegralValue(t.Value), sigWidth, t.Time)
                     SigHistory(Some(pV), Some(curSigInfo))
                 }
                 case _          => SigHistory(None, Some(curSigInfo))
@@ -271,13 +271,13 @@ class VcdInMemWaveForm(val vcdInMemContent: String) extends WaveForm {
         }
     }
 
-    private def MakeIntValue(strVal: String): Int =  {
+    private def MakeIntegralValue(strVal: String): Long =  {
         val xzRemoved = strVal.replaceAll("(x|X|z|Z)", "0")
 
         val binNumPat   = "b([01]+)".r
 
         binNumPat.findFirstMatchIn(xzRemoved) match {
-            case Some(v)    => Integer.parseInt(v.group(1), 2)
+            case Some(v)    => java.lang.Long.parseLong(v.group(1), 2)
             case _          => 0
         }
     }

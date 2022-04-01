@@ -95,6 +95,18 @@ class ReadyValidAction(val wvfm: WaveForm) extends WaveAction()(wvfm) {
     def Events(): List[ReadyValidRecord] = recEvents.toList
 }
 
+class BigValueAction(w: WaveForm) extends WaveAction()(w) {
+    var v = 0L
+
+    val data = Signal("top.DATA")
+
+    At(timemark()) {
+        v = data
+    }
+
+    def GetValue(): Long = v
+}
+
 class WaveActionTest extends AnyFlatSpec {
 
     "WaveReplay" should "detect posedge event" in {
@@ -243,6 +255,23 @@ class WaveActionTest extends AnyFlatSpec {
         assert(events.size == 1)
         assert(events(0).Time == 530)
         assert(events(0).Data == 0xAE)
+    }
+
+    "WaveReplay" should "record signals with big integer values" in {
+        val vcdContent      = """$scope module top $end
+                                 $var wire 33 ! DATA $end
+                                 $upscope $end
+                                 $enddefinitions $end
+
+                                 #500
+                                 b111001010110010101100101011001010 !
+                                 """
+        val wvfm            = new vcd.VcdInMemWaveForm(vcdContent)
+        val wvact           = new BigValueAction(wvfm)
+
+        WaveReplay.Replay(Seq(wvact))
+
+        assert(wvact.GetValue() == 0x1CACACACAL)
     }
 
 }
