@@ -29,7 +29,7 @@ case class VcdScope(name: String, parent: Option[VcdScope] = None) {
 }
 
 /**
- * Contain information retrieved from VCD $var ... $end
+ * Contain information retrieved from VCD var Statement
  *
  * @param kind the kind of the variable
  * @param width the width of the variable
