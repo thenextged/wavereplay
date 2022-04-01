@@ -74,7 +74,7 @@ case class TimedValueHistory(Prev: Option[TimedValue] = None, Cur: Option[TimedV
  * VCD WaveForm with all data loaded in memory in batch
  *
  */
-class VcdInMemWaveForm(val vcdFileName: String) extends WaveForm {
+class VcdInMemWaveForm(val vcdInMemContent: String) extends WaveForm {
 
     // Map of Identifiers to RTL signal references
     private val idToRefMap = mutable.HashMap[String, String]()
@@ -90,6 +90,27 @@ class VcdInMemWaveForm(val vcdFileName: String) extends WaveForm {
 
     // Current index into the timeSeries sequence
     private var curIdx = -1;
+
+    // VCD timescale entry
+    private var vcdTimescale: Option[Tuple2[Int, String]] = None
+
+    // VCD version entry
+    private var vcdVersion: Option[String] = None
+
+    // Initialize VCD
+    VcdInit()
+
+    /**
+     * Retrieve VCD Timescale Entry
+     */
+    def Timescale(): Option[Tuple2[Int, String]] = vcdTimescale
+
+    /**
+     * Retrive VCD Version Entry
+     *
+     */
+
+    def Version(): Option[String] = vcdVersion
 
     def Next(): Boolean  = {
         curIdx += 1
@@ -125,7 +146,7 @@ class VcdInMemWaveForm(val vcdFileName: String) extends WaveForm {
     }
 
     def SameAs(that: WaveForm): Boolean = that match {
-        case w: VcdInMemWaveForm => w.vcdFileName == vcdFileName
+        case w: VcdInMemWaveForm => w.vcdInMemContent == vcdInMemContent
         case _                   => false
     }
 
@@ -170,9 +191,9 @@ class VcdInMemWaveForm(val vcdFileName: String) extends WaveForm {
         }
     }
 
-    override def Init() : Unit = {
+    def VcdInit() : Unit = {
         // Open VCD file
-        val fileContent = Source.fromFile(vcdFileName).getLines().mkString("\n")
+        val fileContent = vcdInMemContent
 
         // Parse file content and fill in internal data structures
         VcdLexer(fileContent) match {
@@ -212,6 +233,8 @@ class VcdInMemWaveForm(val vcdFileName: String) extends WaveForm {
                                 valueChanges += ValueEntry(id, v)
                             }
                         }
+                        case TimescaleTok(t, u) => vcdTimescale = Some((t, u))
+                        case VersionTok(v) => vcdVersion = Some(v)
 
                         case _ => ()
 
@@ -223,16 +246,6 @@ class VcdInMemWaveForm(val vcdFileName: String) extends WaveForm {
                 }
             }
         }
-    }
-
-    override def DeInit(): Unit = {
-        // Clear internal data structures
-        idToRefMap.clear()
-        refToInfoMap.clear()
-        timeSeries.clear()
-        valueMap.clear()
-
-        // Close VCD file
     }
 
     private def MakeIntValue(strVal: String): Int =  {

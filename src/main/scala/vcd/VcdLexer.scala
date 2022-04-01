@@ -28,11 +28,13 @@ object VcdLexer extends RegexParsers {
     val KW_DUMPON           = "$dumpon"
 
     val TEXT_STRING         = """[^("$")]*""".r
-    val TIME_NUMBER         = """(1|10|100)""".r
+    val TIME_NUMBER         = """(100|10|1)""".r
     val TIME_UNIT           = """(s|ms|us|ns|ps|fs)""".r
 
     val SCOPE_KIND          = """(begin|fork|function|module|task)""".r
     val SCOPE_IDENTIFIER    = """[a-zA-Z_][a-zA-Z_0-9\(\)]*""".r
+    val VAR_REFERENCE       = """[a-zA-Z_][a-zA-Z0-9_\$]+""".r
+    val VAR_BIT_EXTRACT     = """\[\d+(:\d+)*\]""".r
 
     val DECIMAL_NUM         = """[0-9]+""".r
     val VAR_KIND            = """(event|integer|parameter|realtime|real|reg|supply0|supply1|time|triand|trior|trireg|tri0|tr1|tri|wand|wire|wor)""".r
@@ -86,8 +88,8 @@ object VcdLexer extends RegexParsers {
     }
 
     def Var: Parser[VarTok] = positioned {
-        KW_VAR ~> VAR_KIND ~ DECIMAL_NUM ~ VAR_ID_CODE ~ SCOPE_IDENTIFIER <~ End ^^ {
-            case k ~ w ~ id ~ r => VarTok(k.trim, w.trim.toInt, id.trim, r.trim)
+        KW_VAR ~> VAR_KIND ~ DECIMAL_NUM ~ VAR_ID_CODE ~ VAR_REFERENCE ~ opt(VAR_BIT_EXTRACT) <~ End ^^ {
+            case k ~ w ~ id ~ r ~ be => VarTok(k.trim, w.trim.toInt, id.trim, r.trim)
         }
     }
 

@@ -7,6 +7,7 @@ lazy val root = (project in file("."))
         name := "vcdreplay",
         libraryDependencies ++= Seq(
             "com.github.scopt" %% "scopt" % "4.0.1",
-            "org.scala-lang.modules" %% "scala-parser-combinators" % "2.1.1"
+            "org.scala-lang.modules" %% "scala-parser-combinators" % "2.1.1",
+            "org.scalatest" %% "scalatest" % "3.2.11"
         )
     )
