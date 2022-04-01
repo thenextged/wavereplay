@@ -15,7 +15,7 @@ abstract class WaveForm {
     /**
      * Get current time mark in the waveform
      */
-    def GetCurTime(): Int
+    def GetCurTime(): Long
 
     /**
      * Check for equality

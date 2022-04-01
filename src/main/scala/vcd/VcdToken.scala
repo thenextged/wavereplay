@@ -15,7 +15,7 @@ case class VarTok(kind: String, width: Int, id: String, ref: String) extends Vcd
 case class UpscopeTok() extends VcdToken
 case class EndDefTok() extends VcdToken
 case class CommentTok(comment: String) extends VcdToken
-case class TimeMarkerTok(time: Int) extends VcdToken
+case class TimeMarkerTok(time: Long) extends VcdToken
 case class DumpVarsTok() extends VcdToken
 case class DumpOffTok() extends VcdToken
 case class DumpOnTok() extends VcdToken

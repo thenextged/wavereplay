@@ -51,7 +51,7 @@ case class ValueEntry(Id: String, Value: String)
  * @param time the simulation time mark
  * @param changeList the list of value changes at the associated time
  */
-case class TimeSeriesEntry(Time: Int, ChangeList: List[ValueEntry])
+case class TimeSeriesEntry(Time: Long, ChangeList: List[ValueEntry])
 
 /**
  * Represent a value in the waveform for a signal at a particular time
@@ -59,7 +59,7 @@ case class TimeSeriesEntry(Time: Int, ChangeList: List[ValueEntry])
  * @param time the time at which the value is given
  * @param value the value
  */
-case class TimedValue(Time: Int, Value: String)
+case class TimedValue(Time: Long, Value: String)
 
 /**
  * Represent the history of a signal's value
@@ -97,6 +97,9 @@ class VcdInMemWaveForm(val vcdInMemContent: String) extends WaveForm {
     // VCD version entry
     private var vcdVersion: Option[String] = None
 
+    // VCD comment entry
+    private var vcdComment: Option[String] = None
+
     // Initialize VCD
     VcdInit()
 
@@ -106,12 +109,28 @@ class VcdInMemWaveForm(val vcdInMemContent: String) extends WaveForm {
     def Timescale(): Option[Tuple2[Int, String]] = vcdTimescale
 
     /**
-     * Retrive VCD Version Entry
-     *
+     * Retrieve VCD Version Entry
      */
-
     def Version(): Option[String] = vcdVersion
 
+    /**
+     * Retrieve VCD Comment Entry
+     */
+    def Comment(): Option[String] = vcdComment
+
+    /**
+     * Retrieve VCD Var Info
+     */
+    def Vars(): Map[String, VarInfo] = refToInfoMap.toMap
+
+    /**
+     * Retrieve Time Series Data/Entries
+     */
+    def Data(): List[TimeSeriesEntry] = timeSeries.toList
+
+    /**
+     * Go to next time mark
+     */
     def Next(): Boolean  = {
         curIdx += 1
         if (curIdx >= timeSeries.size) false
@@ -139,7 +158,7 @@ class VcdInMemWaveForm(val vcdInMemContent: String) extends WaveForm {
         }
     }
 
-    def GetCurTime(): Int = {
+    def GetCurTime(): Long = {
         if (curIdx < 0) curIdx
         else if (curIdx >= timeSeries.size) -1
         else timeSeries(curIdx).Time
@@ -201,13 +220,16 @@ class VcdInMemWaveForm(val vcdInMemContent: String) extends WaveForm {
             case Right(tokenList)   => {
 
                 var scope: Option[VcdScope] = None
-                var curTime: Int = -1
+                var curTime: Long = -1
                 var enValueChange: Boolean = true
                 val valueChanges = mutable.ArrayBuffer[ValueEntry]()
 
                 tokenList foreach { case t =>
                     t match {
-                        case ScopeTok(_, id) => scope = Some(VcdScope(id, scope))
+                        case ScopeTok(_, id) => {
+                            val nScope = Some(VcdScope(id, scope))
+                            scope = nScope
+                        }
                         case VarTok(kind, width, id, ref) => {
                             val varFullPath = scope match {
                                 case Some(s) => s.NameVar(ref)
@@ -235,6 +257,7 @@ class VcdInMemWaveForm(val vcdInMemContent: String) extends WaveForm {
                         }
                         case TimescaleTok(t, u) => vcdTimescale = Some((t, u))
                         case VersionTok(v) => vcdVersion = Some(v)
+                        case CommentTok(c) => vcdComment = Some(c)
 
                         case _ => ()
 

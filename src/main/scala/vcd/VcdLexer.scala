@@ -106,7 +106,7 @@ object VcdLexer extends RegexParsers {
     }
 
     def TimeMarker: Parser[TimeMarkerTok] = positioned {
-        "#" ~> DECIMAL_NUM ^^ { case t => TimeMarkerTok(t.trim.toInt) }
+        "#" ~> DECIMAL_NUM ^^ { case t => TimeMarkerTok(t.trim.toLong) }
     }
 
     def DumpVars: Parser[DumpVarsTok] = positioned {
