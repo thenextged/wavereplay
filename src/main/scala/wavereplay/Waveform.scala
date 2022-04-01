@@ -64,7 +64,7 @@ abstract class WaveForm {
      * @param s the signal of interest
      * @return optionally the previous value of a signal
      */
-    def GetPrevValue(s: Signal): Option[Int] = GetSigHistory(s).Prev match {
+    def GetPrevValue(s: Signal): Option[Long] = GetSigHistory(s).Prev match {
         case Some(sInfo)    => Some(sInfo.Value)
         case _              => None
     }
@@ -75,7 +75,7 @@ abstract class WaveForm {
      * @param s the signal of interest
      * @return optionally the current value of a signal
      */
-    def GetCurValue(s: Signal): Option[Int] = GetSigHistory(s).Cur match {
+    def GetCurValue(s: Signal): Option[Long] = GetSigHistory(s).Cur match {
         case Some(sInfo)    => Some(sInfo.Value)
         case _              => None
     }

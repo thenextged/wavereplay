@@ -23,12 +23,12 @@ abstract class WaveEvent {
     def EventHash: Int
 
     /**
-     * Check whether this event occured based on values in waveform
+     * Check whether this event occurred based on values in waveform
      *
      * @param wvfm the waveform to base decision on
      * @return true if event occured, false otherwise
      */
-    def Occured(wvfm: WaveForm): Boolean
+    def Occurred(wvfm: WaveForm): Boolean
 
     override def equals(that: Any): Boolean = that match {
         case e: WaveEvent   => EventEquals(e)
@@ -50,7 +50,7 @@ class PosEdgeEvent(val s: Signal) extends WaveEvent {
 
     def EventHash: Int = 37 * s.hashCode
 
-    def Occured(wvfm: WaveForm): Boolean = s.Wvfm.GetSigWidth(s) match {
+    def Occurred(wvfm: WaveForm): Boolean = s.Wvfm.GetSigWidth(s) match {
         case 1 => {
             val SigHistory(prev, cur) = wvfm.GetSigHistory(s)
             for (p <- prev; c <- cur) {
@@ -78,7 +78,7 @@ class NegEdgeEvent(val s: Signal) extends WaveEvent {
 
     def EventHash: Int = 41 * s.hashCode
 
-    def Occured(wvfm: WaveForm): Boolean = s.Wvfm.GetSigWidth(s) match {
+    def Occurred(wvfm: WaveForm): Boolean = s.Wvfm.GetSigWidth(s) match {
         case 1 => {
             val SigHistory(prev, cur) = wvfm.GetSigHistory(s)
             for (p <- prev; c <- cur) {
@@ -92,4 +92,21 @@ class NegEdgeEvent(val s: Signal) extends WaveEvent {
 
 object negedge {
     def apply(s: Signal): NegEdgeEvent = new NegEdgeEvent(s)
+}
+
+/**
+ * Time Mark Event
+ *
+ * This event occurs at each new time mark
+ */
+case class timemark() extends WaveEvent {
+
+    def EventEquals(that: WaveEvent): Boolean = that match {
+        case e: timemark    => true
+        case _              => false
+    }
+
+    def EventHash: Int = hashCode()
+
+    def Occurred(wvfm: WaveForm): Boolean = true
 }

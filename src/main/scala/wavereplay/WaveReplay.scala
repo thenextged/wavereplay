@@ -28,7 +28,7 @@ object WaveReplay {
             while(wvfm.Next()) {
 
                 // Get events that occured
-                val eventsFired = eventSet.filter(x => x.Occured(wvfm))
+                val eventsFired = eventSet.filter(x => x.Occurred(wvfm))
 
                 // Run event callbacks
                 actions foreach { case x =>
